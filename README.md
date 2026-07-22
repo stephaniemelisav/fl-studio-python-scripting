@@ -31,6 +31,7 @@ Generan o modifican notas directamente en el Piano Roll (melodías, acordes, arr
 | Script | Qué hace |
 |---|---|
 | `generador-de-acordes.pyscript` | Genera una progresión de acordes diatónicos (tríadas o séptimas) a partir de una nota raíz, escala y patrón de grados (predefinido o personalizado). |
+| `inversiones-y-voicings.pyscript` | Transforma los acordes que ya están en el piano roll (no genera nada nuevo): 1ra/2da/3ra inversión, voicing abierto (drop 2), o duplicar la raíz una octava arriba/abajo. Funciona sobre las notas seleccionadas, o sobre todo si no hay selección. |
 
 ## MIDI Controller Scripts
 

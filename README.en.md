@@ -31,6 +31,7 @@ Generate or modify notes directly in the Piano Roll (melodies, chords, arrangeme
 | Script | What it does |
 |---|---|
 | `generador-de-acordes.pyscript` | Generates a diatonic chord progression (triads or sevenths) from a root note, scale, and a degree pattern (preset or custom). |
+| `inversiones-y-voicings.pyscript` | Transforms chords already on the piano roll (doesn't generate anything new): 1st/2nd/3rd inversion, open voicing (drop 2), or duplicate the root an octave up/down. Works on selected notes, or on everything if nothing is selected. |
 
 ## MIDI Controller Scripts
 
