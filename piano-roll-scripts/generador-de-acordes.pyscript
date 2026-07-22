@@ -1,0 +1,79 @@
+import flpianoroll as flp
+
+# Intervalos (en semitonos) de cada grado dentro de la escala, desde la tonica
+SCALES = {
+	'Mayor': [0, 2, 4, 5, 7, 9, 11],
+	'Menor natural': [0, 2, 3, 5, 7, 8, 10],
+}
+
+ROOTS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+
+# Progresiones predefinidas, escritas como grados de escala (1 = I, 6 = vi, etc.)
+PROGRESSIONS = {
+	'I - V - vi - IV': [1, 5, 6, 4],
+	'I - IV - V': [1, 4, 5],
+	'ii - V - I': [2, 5, 1],
+	'vi - IV - I - V': [6, 4, 1, 5],
+	'Personalizado (usar campo de texto)': None,
+}
+
+
+def createDialog():
+	form = flp.ScriptDialog('Generador de progresion de acordes',
+		'Genera una progresion de acordes diatonicos dentro de una escala.')
+
+	form.addInputCombo('Nota raiz', ROOTS, 0)
+	form.addInputCombo('Escala', list(SCALES.keys()), 0)
+	form.addInputCombo('Tipo de acorde', ['Triada', 'Septima'], 0)
+	form.addInputCombo('Progresion', list(PROGRESSIONS.keys()), 0)
+	form.addInputText('Grados personalizados (ej: 1,4,5,1)', '1,4,5,1')
+	form.addInputKnobInt('Octava', 5, 1, 8)
+	form.addInputKnobInt('Duracion por acorde (beats)', 4, 1, 16)
+	form.addInputCheckbox('Limpiar notas existentes', True)
+
+	return form
+
+
+def buildChord(scale_intervals, degree, chord_size):
+	# degree va de 1 a 7 (grados de la escala). Se apilan terceras dentro de la escala.
+	degree_index = degree - 1
+	notes = []
+	for step in range(chord_size):
+		scale_position = degree_index + step * 2
+		octave_shift = scale_position // len(scale_intervals)
+		note_in_scale = scale_intervals[scale_position % len(scale_intervals)]
+		notes.append(note_in_scale + 12 * octave_shift)
+	return notes
+
+
+def apply(form):
+	root = form.getInputValue('Nota raiz')
+	scale_name = list(SCALES.keys())[form.getInputValue('Escala')]
+	scale_intervals = SCALES[scale_name]
+	chord_size = 4 if form.getInputValue('Tipo de acorde') == 1 else 3
+	octave = form.getInputValue('Octava')
+	duration_beats = form.getInputValue('Duracion por acorde (beats)')
+
+	progression_name = list(PROGRESSIONS.keys())[form.getInputValue('Progresion')]
+	if PROGRESSIONS[progression_name] is not None:
+		degrees = PROGRESSIONS[progression_name]
+	else:
+		raw = form.getInputValue('Grados personalizados (ej: 1,4,5,1)')
+		degrees = [int(d.strip()) for d in raw.split(',') if d.strip()]
+
+	if form.getInputValue('Limpiar notas existentes'):
+		flp.score.clearNotes()
+
+	ticks_per_chord = duration_beats * flp.score.PPQ
+	time_cursor = 0
+
+	for degree in degrees:
+		chord_intervals = buildChord(scale_intervals, degree, chord_size)
+		for interval in chord_intervals:
+			note = flp.Note()
+			note.number = 12 * octave + root + interval
+			note.time = time_cursor
+			note.length = ticks_per_chord
+			note.velocity = 0.8
+			flp.score.addNote(note)
+		time_cursor += ticks_per_chord
