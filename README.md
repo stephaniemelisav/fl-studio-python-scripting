@@ -2,7 +2,7 @@
 
 *[Read this in English](README.en.md)*
 
-Scripts propios para FL Studio, hechos en Python. Dos sistemas distintos, cada uno vive en su carpeta de FL Studio y acá guardamos la copia "fuente" para versionar en GitHub.
+Scripts propios para FL Studio, hechos en Python.
 
 ## Estructura
 
